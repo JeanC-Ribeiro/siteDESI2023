@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
 
+<style>
+    .carousel-caption-blur {
+        background: rgba(0, 0, 0, 0.4);
+        /* Fundo preto semi-transparente */
+        backdrop-filter: blur(8px);
+        /* Desfoque */
+        -webkit-backdrop-filter: blur(8px);
+        /* Suporte Safari */
+        border-radius: 10px;
+        padding: 1rem;
+    }
+</style>
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -36,10 +49,11 @@
     <div class="container-fluid bg-faded fh5co_padd_mediya padding_786">
         <div class="container padding_786">
             <nav class="navbar navbar-expand-md navbar-light">
-                <button class="navbar-toggler mt-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                <button class="navbar-toggler mt-3" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent">
                     <span class="fa fa-bars"></span>
                 </button>
-                <a class="navbar-brand" href="#"><img src="images/logo.png" class="mobile_logo_width" /></a>
+                <a class="navbar-brand" href="#"><img src="images/logo-sm.png.png" class="mobile_logo_width" /></a>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active"><a class="nav-link" href="blog.html">Home</a></li>
@@ -122,14 +136,14 @@
 
                     indicators.innerHTML += `<li data-target="#carousel-news" data-slide-to="${index}" class="${isActive}"></li>`;
                     inner.innerHTML += `
-                    <div class="carousel-item ${isActive}">
-                        <img class="d-block w-100" style="height: 400px; object-fit: cover;" src="${img}" alt="${titulo}">
-                        <div class="carousel-caption d-none d-md-block bg-dark p-3 rounded">
-                            <h5><a href="single.html?id=${noticia.id}" class="text-white">${titulo}</a></h5>
-                            <p>${resumo}</p>
-                            <small>${autor} - ${dataFormatada}</small>
-                        </div>
-                    </div>`;
+            <div class="carousel-item ${isActive}">
+                <img class="d-block w-100" style="height: 400px; object-fit: cover;" src="${img}" alt="${titulo}">
+                <div class="carousel-caption d-none d-md-block carousel-caption-blur">
+                    <h5><a href="single.html?id=${noticia.id}" class="text-white">${titulo}</a></h5>
+                    <p>${resumo}</p>
+                    <small>${autor} - ${dataFormatada}</small>
+                </div>
+            </div>`;
                 });
 
             } catch (error) {
@@ -138,6 +152,7 @@
                     '<div class="carousel-item active"><p class="text-center">Erro ao carregar notícias.</p></div>';
             }
         }
+
 
         async function loadCalendar() {
             try {
@@ -181,30 +196,85 @@
             try {
                 const res = await fetch(`${API_BASE}/enquetes?ativo=1`);
                 if (!res.ok) throw new Error('Erro ao buscar enquetes');
+
                 const data = await res.json();
+                console.log('Resposta da API (enquetes):', data);
 
                 const container = document.getElementById('polls-container');
                 container.innerHTML = '';
 
-                data.forEach((enquete) => {
-                    let opcoes = [];
-                    let votos = [];
-                    try {
-                        opcoes = enquete.opcoes ? JSON.parse(enquete.opcoes) : [];
-                        votos = enquete.votos ? JSON.parse(enquete.votos) : [];
-                    } catch { }
+                function parseArray(input) {
+                    if (Array.isArray(input)) return input;
+                    if (typeof input === 'string') {
+                        try {
+                            const parsed = JSON.parse(input);
+                            return Array.isArray(parsed) ? parsed : [];
+                        } catch {
+                            return [];
+                        }
+                    }
+                    return [];
+                }
 
-                    const total = votos.reduce((a, b) => a + b, 0);
-                    let optionsHtml = opcoes.map((opcao, i) => {
-                        const pct = total > 0 ? ((votos[i] / total) * 100).toFixed(1) : 0;
-                        return `<li>${opcao}: ${votos[i] || 0} votos (${pct}%)</li>`;
-                    }).join('');
+                data.forEach((enquete, index) => {
+                    const opcoes = parseArray(enquete.opcoes);
+                    const votos = parseArray(enquete.votos);
+
+                    const enqueteId = enquete.id;
+                    const pergunta = enquete.pergunta;
+
+                    const opcoesHtml = opcoes.map((opcao, i) => `
+                <div>
+                    <input type="radio" name="enquete_${enqueteId}" id="opcao_${enqueteId}_${i}" value="${i}">
+                    <label for="opcao_${enqueteId}_${i}">${opcao}</label>
+                </div>
+            `).join('');
 
                     container.innerHTML += `
-                    <div style="margin-bottom:20px;">
-                        <h5>${enquete.pergunta}</h5>
-                        <ul>${optionsHtml}</ul>
-                    </div>`;
+                <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+                    <h5>${pergunta}</h5>
+                    <form id="form_enquete_${enqueteId}">
+                        ${opcoesHtml}
+                        <button type="submit">Votar</button>
+                    </form>
+                </div>
+            `;
+
+                    // Adiciona o listener do form
+                    setTimeout(() => {
+                        const form = document.getElementById(`form_enquete_${enqueteId}`);
+                        if (form) {
+                            form.addEventListener('submit', async (e) => {
+                                e.preventDefault();
+
+                                const selected = form.querySelector('input[name="enquete_' + enqueteId + '"]:checked');
+                                if (!selected) return alert("Por favor, selecione uma opção.");
+
+                                const opcaoIndex = parseInt(selected.value);
+
+                                // Atualiza os votos
+                                let votosAtualizados = [...(Array.isArray(votos) ? votos : [])];
+                                while (votosAtualizados.length < opcoes.length) votosAtualizados.push(0);
+                                votosAtualizados[opcaoIndex] += 1;
+
+                                try {
+                                    const updateRes = await fetch(`${API_BASE}/enquetes/${enqueteId}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ votos: JSON.stringify(votosAtualizados) })
+                                    });
+
+                                    if (!updateRes.ok) throw new Error("Erro ao registrar voto");
+
+                                    alert("Voto registrado com sucesso!");
+                                    loadPolls(); // recarrega os resultados
+                                } catch (err) {
+                                    console.error("Erro ao votar:", err);
+                                    alert("Erro ao registrar voto.");
+                                }
+                            });
+                        }
+                    }, 0);
                 });
             } catch (error) {
                 console.error('Erro ao carregar enquetes:', error);
@@ -213,6 +283,8 @@
             }
         }
 
+
+
         document.addEventListener('DOMContentLoaded', () => {
             loadNews();
             loadCalendar();
@@ -220,4 +292,5 @@
         });
     </script>
 </body>
+
 </html>
