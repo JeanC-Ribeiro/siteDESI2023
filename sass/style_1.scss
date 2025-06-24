@@ -1,6 +1,6 @@
 /* Scss Document */
 
-$yellow:#f5bc04;
+$green:#00A99D;
 
 @mixin border-radius($radius) {
 	-webkit-border-radius: $radius;
@@ -36,24 +36,24 @@ $yellow:#f5bc04;
 }
 
 a, a:hover {
-	color: $yellow;
+	color: $green;
 }
 .fh5co_header_bg {
-	background: #222;
+	background: #333547;
 	color: #fff;
 }
 .color_fff {
 	color: #fff!important;
 }
 .treding_btn {
-	background: $yellow;
+	background: $green;
 	color: #fff;
 	margin: 0 10px;
 	display: inline-block;
 	padding: 15px 40px;
 }
 .treding_btn:hover, .treding_btn:focus {
-	background: $yellow;
+	background: $green;
 	color: #fff;
 	margin: 0 10px;
 	display: inline-block;
@@ -66,7 +66,7 @@ a, a:hover {
 	@include clip-path(polygon(0 1%, 100% 0, 0 100%, 0% 100%));
 	height: 20px;
 	width: 20px;
-	background: $yellow;
+	background: $green;
 	position: absolute;
 	left: 9px;
 }
@@ -92,7 +92,7 @@ a, a:hover {
 .fh5co_display_table:hover, .fh5co_display_table:focus {
 	display: table;
 	color: #777;
-	border: 1px solid $yellow!important;
+	border: 1px solid $green!important;
 	cursor: pointer;
 	@include border-radius(50%);
 }
@@ -119,11 +119,11 @@ a, a:hover {
 	padding-right: 20px!important;
 	margin: 0 20px!important;
 	@include transition(0.5s);
-	background: $yellow!important;
+	background: $green!important;
 	@include clip-path(polygon(100% 0, 100% 85%, 14% 85%, 0 100%, 0% 60%, 0 0));
 }
 .navbar-light .navbar-nav .nav-link {
-	color: #222!important;
+	color: #333547!important;
 	padding-top: 12px!important;
 	padding-bottom: 15px!important;
 	padding-left: 20px!important;
@@ -134,7 +134,7 @@ a, a:hover {
 	@include clip-path(polygon(100% 0, 100% 85%, 14% 85%, 0 100%, 0% 60%, 0 0));
 
 	&:focus, &:hover {
-		background: $yellow!important;
+		background: $green!important;
 		color: #fff!important;
 		padding-top: 12px!important;
 		padding-bottom: 15px!important;
@@ -353,7 +353,7 @@ a, a:hover {
 	color: #777;
 }
 .c_m {
-	color: $yellow;
+	color: $green;
 }
 .fh5co_small_post_heading {
 	font-size: 17px;
@@ -423,7 +423,7 @@ a, a:hover {
 	content: '';
 	height: 120%;
 	width: 120%;
-	background-color: $yellow;
+	background-color: $green;
 	z-index: -1;
 	top: -10%;
 	right: -10%;
@@ -437,12 +437,12 @@ a, a:hover {
 }
 .fh5co_magna {
 	font-size: 16px;
-	color: #222!important;
+	color: #333547!important;
 	font-weight: 800;
 }
 .fh5co_mini_time {
 	font-size: 14px;
-	color: #222;
+	color: #333547;
 	display: inline-block;
 }
 .fh5co_consectetur {
@@ -460,7 +460,7 @@ a, a:hover {
 .fh5co_tagg {
 	background: #f1f1f1;
 	padding: 10px 15px;
-	color: #222;
+	color: #333547;
 	@include transition(0.5s);
 	margin-right: 8px;
 	margin-top: 5px;
@@ -468,7 +468,7 @@ a, a:hover {
 	display: inline-block;
 }
 .fh5co_tagg:hover, .fh5co_tagg:focus {
-	background: $yellow;
+	background: $green;
 	color: #fff;
 	text-decoration: none;
 }
@@ -483,30 +483,30 @@ a, a:hover {
 .btn_mange_pagging {
 	background: #f1f1f1;
 	padding: 12px 20px;
-	color: #222!important;
+	color: #333547!important;
 	font-weight: 800;
 	margin: 0 10px;
 	@include transition(0.5s);
 }
 .btn_pagging {
 	background: #f1f1f1!important;
-	color: #222;
+	color: #333547;
 	padding: 12px 20px!important;
 	font-weight: 800;
 	margin: 0 10px;
 	@include transition(0.5s);
 }
 .btn_mange_pagging:hover, .btn_mange_pagging:focus {
-	background: #222;
+	background: #333547;
 	color: #fff!important;
 	font-weight: 800;
 }
 .btn_pagging:hover, .btn_pagging:focus {
-	background: #222!important;
+	background: #333547!important;
 	color: #fff;
 }
 .fh5co_footer_bg {
-	background: #222;
+	background: #333547;
 	color: #fff;
 	-webkit-clip-path: polygon(0 17%, 100% 0, 100% 100%, 0% 100%);
 	clip-path: polygon(0 17%, 100% 0, 100% 100%, 0% 100%);
@@ -529,7 +529,7 @@ a, a:hover {
 	display: table;
 	color: #777;
 	font-size: 18px;
-	border: 1px solid #222!important;
+	border: 1px solid #333547!important;
 	cursor: pointer;
 	@include border-radius(50%);
 	@include transition(1s);
@@ -539,7 +539,7 @@ a, a:hover {
 .fh5co_display_table_footer:hover, .fh5co_display_table_footer:focus {
 	display: table;
 	color: #777;
-	border: 1px solid $yellow!important;
+	border: 1px solid $green!important;
 	cursor: pointer;
 	@include border-radius(50%);
 }
@@ -554,7 +554,7 @@ a, a:hover {
 	@include transition(0.5s);
 }
 .footer_menu li > a:hover, .footer_menu li > a:focus {
-	color: $yellow!important;
+	color: $green!important;
 	padding: 8px 0!important;
 	display: -webkit-box;
 	margin-left: 5px;
@@ -588,7 +588,7 @@ a, a:hover {
 }
 .fh5co_footer_text_box {
 	&:focus {
-		border-color: $yellow;
+		border-color: $green;
 	}
 
 	background: none!important;
@@ -600,7 +600,7 @@ a, a:hover {
 	color: #fff!important;
 }
 .fh5co_footer_subcribe {
-	background: $yellow!important;
+	background: $green!important;
 	border-bottom: 2px solid #fff!important;
 	border-top: 0px solid #fff!important;
 	border-top: 0px solid #fff!important;
@@ -622,7 +622,7 @@ a, a:hover {
 }
 #fh5co_contact_form input:focus,
 #fh5co_contact_form textarea:focus {
-	border-color: $yellow;
+	border-color: $green;
 }
 .contact_us_bg_img {
 	background: url(../images/photo-1449157291145-7efd050a4d0e-578x362.jpg);
@@ -639,7 +639,7 @@ a, a:hover {
 .fh5co_con:hover, .fh5co_con:focus {
 	text-decoration: none;
 	font-size: 24px;
-	color: $yellow;
+	color: $green;
 	font-weight: 800;
 }
 .fh5co_con_123 {
@@ -654,23 +654,23 @@ a, a:hover {
 	border: 1px solid #fff!important;
 	color: #fff!important;
 	font-size: 24px!important;
-	background: $yellow;
+	background: $green;
 	padding: 10px 15px;
 	margin: 0 20px;
 }
 .fh5co_heading {
 	font-size: 24px;
-	color: #222;
+	color: #333547;
 }
 .fh5co_contact_us_no_icon_div {
 	height: 50px;
 	width: 50px;
 	@include border-radius(50%);
-	border: 2px solid #222;
+	border: 2px solid #333547;
 	display: table;
 	text-align: center;
 	font-size: 20px;
-	color: #222;
+	color: #333547;
 	@include transition(all 0.5s);
 }
 .fh5co_contact_us_no_icon_div > span {
@@ -682,9 +682,9 @@ a, a:hover {
 	font-size: 16px;
 }
 .fh5co_contact_us_no_icon_difh5co_hover:hover > .fh5co_contact_us_no_icon_difh5co_hover_1 > .fh5co_contact_us_no_icon_div {
-	color: $yellow!important;
+	color: $green!important;
 	cursor: pointer;
-	border: 2px solid $yellow!important;
+	border: 2px solid $green!important;
 }
 .fh5co_contact_us_no_icon_difh5co_hover_2 {
 	padding-left: 0 !important;
@@ -752,7 +752,7 @@ a, a:hover {
 	letter-spacing: 1px!important;
 }
 .contact_btn {
-	background: $yellow!important;
+	background: $green!important;
 	@include border-radius(0!important);
 	color: #fff!important;
 	padding: 10px 50px!important;
@@ -762,9 +762,9 @@ a, a:hover {
 .contact_btn:focus
 {
 	background: none!important;
-	border: 1px solid $yellow!important;
+	border: 1px solid $green!important;
 	@include border-radius(0!important);
-	color: $yellow!important;
+	color: $green!important;
 	padding: 10px 50px!important;
 }
 
