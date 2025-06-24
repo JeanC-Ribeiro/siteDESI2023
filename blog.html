@@ -141,7 +141,7 @@
 
         async function loadCalendar() {
             try {
-                const res = await fetch(`${API_BASE}/eventos`);
+                const res = await fetch(`${API_BASE}/eventos?ativo=1`);
                 if (!res.ok) throw new Error('Erro ao buscar eventos');
                 const data = await res.json();
 
@@ -179,7 +179,7 @@
 
         async function loadPolls() {
             try {
-                const res = await fetch(`${API_BASE}/enquetes`);
+                const res = await fetch(`${API_BASE}/enquetes?ativo=1`);
                 if (!res.ok) throw new Error('Erro ao buscar enquetes');
                 const data = await res.json();
 
