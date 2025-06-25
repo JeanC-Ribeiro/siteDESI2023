@@ -4,11 +4,8 @@
 <style>
     .carousel-caption-blur {
         background: rgba(0, 0, 0, 0.4);
-        /* Fundo preto semi-transparente */
         backdrop-filter: blur(8px);
-        /* Desfoque */
         -webkit-backdrop-filter: blur(8px);
-        /* Suporte Safari */
         border-radius: 10px;
         padding: 1rem;
     }
@@ -82,6 +79,8 @@
                             <span class="sr-only">Próximo</span>
                         </a>
                     </div>
+                    <div id="noticias-list" class="mt-4"></div>
+
                 </div>
 
                 <div class="col-md-4 animate-box" data-animate-effect="fadeInRight">
@@ -121,6 +120,8 @@
                 if (!res.ok) throw new Error('Erro ao buscar notícias');
                 const data = await res.json();
 
+                const importantes = data.slice(0, 3); // ou filtre por .filter(n => n.importante)
+
                 const indicators = document.getElementById('carousel-indicators');
                 const inner = document.getElementById('carousel-inner');
                 indicators.innerHTML = '';
@@ -136,12 +137,12 @@
 
                     indicators.innerHTML += `<li data-target="#carousel-news" data-slide-to="${index}" class="${isActive}"></li>`;
                     inner.innerHTML += `
-            <div class="carousel-item ${isActive}">
+                <div class="carousel-item ${isActive}">
                 <img class="d-block w-100" style="height: 400px; object-fit: cover;" src="${img}" alt="${titulo}">
                 <div class="carousel-caption d-none d-md-block carousel-caption-blur">
                     <h5><a href="single.html?id=${noticia.id}" class="text-white">${titulo}</a></h5>
                     <p>${resumo}</p>
-                    <small>${autor} - ${dataFormatada}</small>
+                 
                 </div>
             </div>`;
                 });
@@ -191,15 +192,12 @@
                     '<p>Não foi possível carregar o calendário de eventos.</p>';
             }
         }
-
         async function loadPolls() {
             try {
                 const res = await fetch(`${API_BASE}/enquetes?ativo=1`);
                 if (!res.ok) throw new Error('Erro ao buscar enquetes');
 
                 const data = await res.json();
-                console.log('Resposta da API (enquetes):', data);
-
                 const container = document.getElementById('polls-container');
                 container.innerHTML = '';
 
@@ -216,66 +214,71 @@
                     return [];
                 }
 
-                data.forEach((enquete, index) => {
+                data.forEach((enquete) => {
                     const opcoes = parseArray(enquete.opcoes);
-                    const votos = parseArray(enquete.votos);
+                    const enqueteId = `enquete_${enquete.id}`;
+                    const localData = JSON.parse(localStorage.getItem(enqueteId) || null);
 
-                    const enqueteId = enquete.id;
-                    const pergunta = enquete.pergunta;
+                    if (localData && localData.votou) {
+                        const votos = localData.votos;
+                        const totalVotos = votos.reduce((acc, val) => acc + val, 0);
 
-                    const opcoesHtml = opcoes.map((opcao, i) => `
-                <div>
-                    <input type="radio" name="enquete_${enqueteId}" id="opcao_${enqueteId}_${i}" value="${i}">
-                    <label for="opcao_${enqueteId}_${i}">${opcao}</label>
-                </div>
-            `).join('');
+                        const resultados = opcoes.map((opcao, i) => {
+                            const v = votos[i] || 0;
+                            const pct = totalVotos > 0 ? ((v / totalVotos) * 100).toFixed(1) : 0;
+                            return `<p>${opcao}: ${v} voto${v !== 1 ? 's' : ''} (${pct}%)</p>`;
+                        }).join('');
 
-                    container.innerHTML += `
-                <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
-                    <h5>${pergunta}</h5>
-                    <form id="form_enquete_${enqueteId}">
-                        ${opcoesHtml}
-                        <button type="submit">Votar</button>
-                    </form>
-                </div>
-            `;
+                        container.innerHTML += `
+          <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+            <h5>${enquete.pergunta}</h5>
+            ${resultados}
+            <p><strong>Você já votou nesta enquete.</strong></p>
+          </div>
+        `;
+                    } else {
+                        const opcoesHtml = opcoes.map((opcao, i) => `
+          <div>
+            <input type="radio" name="${enqueteId}" id="${enqueteId}_${i}" value="${i}">
+            <label for="${enqueteId}_${i}">${opcao}</label>
+          </div>
+        `).join('');
 
-                    // Adiciona o listener do form
-                    setTimeout(() => {
-                        const form = document.getElementById(`form_enquete_${enqueteId}`);
-                        if (form) {
-                            form.addEventListener('submit', async (e) => {
+                        container.innerHTML += `
+          <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+            <h5>${enquete.pergunta}</h5>
+            <form id="form_${enqueteId}">
+              ${opcoesHtml}
+              <button type="submit">Votar</button>
+            </form>
+          </div>
+        `;
+
+                        // Listener do form
+                        setTimeout(() => {
+                            const form = document.getElementById(`form_${enqueteId}`);
+                            form.addEventListener('submit', (e) => {
                                 e.preventDefault();
+                                const selected = form.querySelector('input[name="' + enqueteId + '"]:checked');
+                                if (!selected) return alert("Selecione uma opção.");
 
-                                const selected = form.querySelector('input[name="enquete_' + enqueteId + '"]:checked');
-                                if (!selected) return alert("Por favor, selecione uma opção.");
+                                const index = parseInt(selected.value);
+                                let votos = new Array(opcoes.length).fill(0);
+                                votos[index] = 1;
 
-                                const opcaoIndex = parseInt(selected.value);
+                                // Salva no localStorage
+                                localStorage.setItem(enqueteId, JSON.stringify({
+                                    votou: true,
+                                    votos: votos
+                                }));
 
-                                // Atualiza os votos
-                                let votosAtualizados = [...(Array.isArray(votos) ? votos : [])];
-                                while (votosAtualizados.length < opcoes.length) votosAtualizados.push(0);
-                                votosAtualizados[opcaoIndex] += 1;
-
-                                try {
-                                    const updateRes = await fetch(`${API_BASE}/enquetes/${enqueteId}`, {
-                                        method: 'PUT',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ votos: JSON.stringify(votosAtualizados) })
-                                    });
-
-                                    if (!updateRes.ok) throw new Error("Erro ao registrar voto");
-
-                                    alert("Voto registrado com sucesso!");
-                                    loadPolls(); // recarrega os resultados
-                                } catch (err) {
-                                    console.error("Erro ao votar:", err);
-                                    alert("Erro ao registrar voto.");
-                                }
+                                alert("Voto registrado localmente!");
+                                loadPolls(); // Atualiza a exibição
                             });
-                        }
-                    }, 0);
+                        }, 0);
+                    }
                 });
+
             } catch (error) {
                 console.error('Erro ao carregar enquetes:', error);
                 document.getElementById('polls-container').innerHTML =
