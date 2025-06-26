@@ -9,6 +9,14 @@
         border-radius: 10px;
         padding: 1rem;
     }
+
+    .navbar-light .navbar-nav .open>.nav-link,
+    .navbar-light .navbar-nav .active>.nav-link,
+    .navbar-light .navbar-nav .nav-link.open,
+    .navbar-light .navbar-nav .nav-link.active {
+        clip-path: none !important;
+        border-bottom: 1px solid #CCC;
+    }
 </style>
 
 <head>
@@ -85,7 +93,8 @@
 
                 <div class="col-md-4 animate-box" data-animate-effect="fadeInRight">
                     <div class="fh5co_heading fh5co_heading_border_bottom py-2 mb-4">Eventos</div>
-                    <div id="events-container" style="min-height: 400px;"></div>
+                    <div id="events-container" style="min-height: 400px; cursor: pointer;"
+                        onclick="window.location.href='eventos.html'"></div>
 
                     <div style="margin-top:40px;">
                         <div class="fh5co_heading fh5co_heading_border_bottom py-2 mb-4">Enquetes</div>
@@ -95,6 +104,27 @@
             </div>
         </div>
     </div>
+    <!-- Modal de Notícia -->
+    <div class="modal fade" id="noticiaModal" tabindex="-1" role="dialog" aria-labelledby="noticiaModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noticiaModalLabel">Título da Notícia</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImagem" src="" alt="" class="img-fluid mb-3"
+                        style="max-height:300px; object-fit:cover;">
+                    <p id="modalConteudo"></p>
+                    <p class="text-muted"><small id="modalAutorData"></small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="gototop js-top"><a href="#" class="js-gotop"><i class="fa fa-arrow-up"></i></a></div>
 
@@ -112,6 +142,25 @@
         function formatDate(dateStr) {
             const d = new Date(dateStr);
             return isNaN(d) ? '' : d.toLocaleDateString('pt-BR');
+        }
+
+        async function abrirNoticia(id) {
+            try {
+                const res = await fetch(`${API_BASE}/noticias/${id}`);
+                if (!res.ok) throw new Error('Erro ao buscar a notícia');
+                const noticia = await res.json();
+
+
+                document.getElementById('noticiaModalLabel').innerText = noticia.titulo || 'Sem título';
+                document.getElementById('modalConteudo').innerHTML = noticia.conteudo || 'Sem conteúdo disponível.';
+                document.getElementById('modalAutorData').innerText = `${noticia.id_autor || 'Autor desconhecido'} - ${formatDate(noticia.data)}`;
+                document.getElementById('modalImagem').src = noticia.imagem || 'images/nathan-mcbride-229637.jpg';
+
+                $('#noticiaModal').modal('show');
+            } catch (err) {
+                alert('Erro ao carregar a notícia completa.');
+                console.error(err);
+            }
         }
 
         async function loadNews() {
@@ -140,7 +189,7 @@
                 <div class="carousel-item ${isActive}">
                 <img class="d-block w-100" style="height: 400px; object-fit: cover;" src="${img}" alt="${titulo}">
                 <div class="carousel-caption d-none d-md-block carousel-caption-blur">
-                    <h5><a href="single.html?id=${noticia.id}" class="text-white">${titulo}</a></h5>
+                <h5><a href="#" onclick="abrirNoticia(${noticia.id}); return false;" class="text-white">${titulo}</a></h5>
                     <p>${resumo}</p>
                  
                 </div>
@@ -175,9 +224,9 @@
                     initialView: 'dayGridMonth',
                     locale: 'pt-br',
                     headerToolbar: {
-                        left: 'prev,next today',
+                        left: '',
                         center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        right: ''
                     },
                     events,
                     eventClick: function (info) {
@@ -190,6 +239,7 @@
                 console.error('Erro ao carregar calendário:', error);
                 document.getElementById('events-container').innerHTML =
                     '<p>Não foi possível carregar o calendário de eventos.</p>';
+
             }
         }
         async function loadPolls() {

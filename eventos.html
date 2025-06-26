@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eventos - CONDOSYNC</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>CONDOSYNC</title>
+
+    <!-- CSS -->
+    <link href="css/media_query.css" rel="stylesheet" />
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="css/animate.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+    <link href="css/owl.carousel.css" rel="stylesheet" />
+    <link href="css/owl.theme.default.css" rel="stylesheet" />
+    <link href="css/style_1.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    <script src="js/modernizr-3.5.0.min.js"></script>
+
+    <style>
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .fc-toolbar-title{
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+
+    <body>
+        <div class="container-fluid fh5co_header_bg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 fh5co_mediya_center">
+                        <div class="d-flex align-items-center">
+                            <img src="images/logo-sm.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                            <a href="#" class="treding_btn">CONDOSYNC</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid bg-faded fh5co_padd_mediya padding_786">
+            <div class="container padding_786">
+                <nav class="navbar navbar-expand-md navbar-light">
+                    <button class="navbar-toggler mt-3" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent">
+                        <span class="fa fa-bars"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item active"><a class="nav-link" href="blog.html">Home</a></li>
+                            <li class="nav-item active"><a class="nav-link" href="eventos.html">Eventos</a></li>
+
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <h2 style="text-align: center;">Calendário de Eventos</h2>
+        <div id="calendar"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+        <script>
+            const API_BASE = 'http://3.19.193.161/api';
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                const calendarEl = document.getElementById('calendar');
+                const res = await fetch(`${API_BASE}/eventos?ativo=1`);
+                const data = await res.json();
+
+                const events = data.map(ev => ({
+                    id: ev.id,
+                    title: ev.titulo,
+                    start: ev.data_evento,
+                    description: ev.descricao || ''
+                }));
+
+                const calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    locale: 'pt-br',
+                    events,
+                    buttonText: {
+                        today: 'Hoje'
+                    },
+                    eventClick: function (info) {
+                        alert(`Evento: ${info.event.title}\nDescrição: ${info.event.extendedProps.description || 'Sem descrição'}`);
+                    }
+                });
+
+                calendar.render();
+            });
+        </script>
+    </body>
+
+</html>
