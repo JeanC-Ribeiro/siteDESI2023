@@ -2,105 +2,164 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Eventos - CONDOSYNC</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>CONDOSYNC</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eventos - CONDOSYNC</title>
 
-    <!-- CSS -->
-    <link href="css/media_query.css" rel="stylesheet" />
-    <link href="css/bootstrap.css" rel="stylesheet" />
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="css/animate.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
-    <link href="css/owl.carousel.css" rel="stylesheet" />
-    <link href="css/owl.theme.default.css" rel="stylesheet" />
-    <link href="css/style_1.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
-    <script src="js/modernizr-3.5.0.min.js"></script>
+  <!-- CSS -->
+  <link href="css/media_query.css" rel="stylesheet" />
+  <link href="css/bootstrap.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+  <link href="css/animate.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+  <link href="css/owl.carousel.css" rel="stylesheet" />
+  <link href="css/owl.theme.default.css" rel="stylesheet" />
+  <link href="css/style_1.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <script src="js/modernizr-3.5.0.min.js"></script>
+  <style>
+    #calendar {
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
-    <style>
-        #calendar {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .fc-toolbar-title{
-            text-transform: uppercase;
-        }
-    </style>
+    .fc-toolbar-title {
+      text-transform: uppercase;
+    }
+  </style>
 </head>
 
 <body>
 
-    <body>
-        <div class="container-fluid fh5co_header_bg">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 fh5co_mediya_center">
-                        <div class="d-flex align-items-center">
-                            <img src="images/logo-sm.png" alt="Logo" style="height: 40px; margin-right: 10px;">
-                            <a href="#" class="treding_btn">CONDOSYNC</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="container-fluid fh5co_header_bg">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 fh5co_mediya_center">
+          <div class="d-flex align-items-center">
+            <img src="images/logo-sm.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+            <a href="blog.html" class="treding_btn">CONDOSYNC</a>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <div class="container-fluid bg-faded fh5co_padd_mediya padding_786">
-            <div class="container padding_786">
-                <nav class="navbar navbar-expand-md navbar-light">
-                    <button class="navbar-toggler mt-3" type="button" data-toggle="collapse"
-                        data-target="#navbarSupportedContent">
-                        <span class="fa fa-bars"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav mr-auto">
-                            <li class="nav-item active"><a class="nav-link" href="blog.html">Home</a></li>
-                            <li class="nav-item active"><a class="nav-link" href="eventos.html">Eventos</a></li>
+  <div class="container-fluid bg-faded fh5co_padd_mediya padding_786">
+    <div class="container padding_786">
+      <nav class="navbar navbar-expand-md navbar-light">
+        <button class="navbar-toggler mt-3" type="button" id="btnToggleMenu">
+          <span class="fa fa-bars"></span>
+        </button>
 
-                        </ul>
-                    </div>
-                </nav>
-            </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active"><a class="nav-link" href="blog.html">Home</a></li>
+            <li class="nav-item active"><a class="nav-link" href="eventos.html">Eventos</a></li>
+          </ul>
         </div>
+      </nav>
+    </div>
+  </div>
 
-        <h2 style="text-align: center;">Calendário de Eventos</h2>
-        <div id="calendar"></div>
+  <!-- Modal de Detalhes do Evento -->
+  <div class="modal fade" id="event-detail-modal" tabindex="-1" aria-labelledby="eventDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eventDetailModalLabel">Detalhes do Evento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div id="view-section">
+            <p><strong>Título:</strong> <span id="event-title"></span></p>
+            <p><strong>Descrição:</strong></p>
+            <p id="event-description"></p>
+            <p><strong>Autor:</strong> <span id="event-author">Desconhecido</span></p>
+            <p><strong>Zona:</strong> <span id="event-zone">Desconhecida</span></p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-        <script>
-            const API_BASE = 'http://3.19.193.161/api';
+  <h2 style="text-align: center;">Calendário de Eventos</h2>
+  <div id="calendar"></div>
 
-            document.addEventListener('DOMContentLoaded', async () => {
-                const calendarEl = document.getElementById('calendar');
-                const res = await fetch(`${API_BASE}/eventos?ativo=1`);
-                const data = await res.json();
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js"></script>
+  <script>
+    const API_BASE = 'http://3.19.193.161/api';
 
-                const events = data.map(ev => ({
-                    id: ev.id,
-                    title: ev.titulo,
-                    start: ev.data_evento,
-                    description: ev.descricao || ''
-                }));
+    // Função para controlar abertura/fechamento do menu hamburguer
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('btnToggleMenu');
+      const menu = document.getElementById('navbarSupportedContent');
 
-                const calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    locale: 'pt-br',
-                    events,
-                    buttonText: {
-                        today: 'Hoje'
-                    },
-                    eventClick: function (info) {
-                        alert(`Evento: ${info.event.title}\nDescrição: ${info.event.extendedProps.description || 'Sem descrição'}`);
-                    }
-                });
+      btn.addEventListener('click', () => {
+        if (menu.classList.contains('show')) {
+          menu.classList.remove('show');
+        } else {
+          menu.classList.add('show');
+        }
+      });
+    });
 
-                calendar.render();
-            });
-        </script>
-    </body>
+    // Código para carregar e renderizar o calendário com eventos e modal
+    document.addEventListener('DOMContentLoaded', async () => {
+      const calendarEl = document.getElementById('calendar');
+
+      try {
+        const [usuariosRes, zonasRes, eventosRes] = await Promise.all([
+          fetch(`${API_BASE}/usuarios`),
+          fetch(`${API_BASE}/zonas`),
+          fetch(`${API_BASE}/eventos?ativo=1`)
+        ]);
+
+        const usuarios = await usuariosRes.json();
+        const zonas = await zonasRes.json();
+        const eventos = await eventosRes.json();
+
+        const autoresMap = Object.fromEntries(usuarios.map(u => [u.id, u.nome]));
+        const zonasMap = Object.fromEntries(zonas.map(z => [z.id, z.nome]));
+
+        const events = eventos.map(ev => ({
+          id: ev.id,
+          title: ev.titulo,
+          start: ev.data_evento,
+          description: ev.descricao || '',
+          author: autoresMap[ev.id_autor] || 'Desconhecido',
+          zone: zonasMap[ev.id_zona] || 'Desconhecida'
+        }));
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          locale: 'pt-br',
+          events,
+          buttonText: {
+            today: 'Hoje'
+          },
+          eventClick: function (info) {
+            document.getElementById('event-title').textContent = info.event.title;
+            document.getElementById('event-description').textContent = info.event.extendedProps.description || 'Sem descrição';
+            document.getElementById('event-author').textContent = info.event.extendedProps.author || 'Desconhecido';
+            document.getElementById('event-zone').textContent = info.event.extendedProps.zone || 'Desconhecida';
+
+            const modal = new bootstrap.Modal(document.getElementById('event-detail-modal'));
+            modal.show();
+          }
+        });
+
+        calendar.render();
+      } catch (error) {
+        console.error('Erro ao carregar eventos:', error);
+      }
+    });
+  </script>
+</body>
 
 </html>
