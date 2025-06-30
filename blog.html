@@ -84,6 +84,10 @@
     #btnNextNoticia {
         right: 10px;
     }
+
+    #noticias-list p {
+        white-space: pre-wrap;
+    }
 </style>
 
 <head>
@@ -272,35 +276,35 @@
 
                     indicators.innerHTML += `<li data-target="#carousel-news" data-slide-to="${index}" class="${isActive}"></li>`;
                     inner.innerHTML += `
-                        <div class="carousel-item ${isActive}">
-                            <img class="d-block w-100" style="height: 400px; object-fit: cover;" src="${img}" alt="${titulo}">
-                            <div class="carousel-caption d-none d-md-block carousel-caption-blur">
-                                <h5><a href="#" onclick="abrirNoticia(${noticia.id}); return false;" class="text-white">${titulo}</a></h5>
-                                <p>${resumo}</p>
-                            </div>
-                        </div>`;
+                            <div class="carousel-item ${isActive}">
+                                <img class="d-block w-100" style="height: 400px; object-fit: cover;" src="${img}" alt="${titulo}">
+                                <div class="carousel-caption d-none d-md-block carousel-caption-blur">
+                                    <h5><a href="#" onclick="abrirNoticia(${noticia.id}); return false;" class="text-white">${titulo}</a></h5>
+                                    <p>${resumo}</p>
+                                </div>
+                            </div>`;
                 });
 
                 const noticiasList = document.getElementById('noticias-list');
                 noticiasList.innerHTML = outras.map(noticia => {
                     const img = noticia.imagem || 'images/nathan-mcbride-229637.jpg';
                     const titulo = noticia.titulo || 'Sem título';
-                    const resumo = noticia.resumo || (noticia.conteudo ? noticia.conteudo.slice(0, 120) + '...' : '');
+                    const resumo = noticia.resumo || noticia.conteudo || 'Sem descrição disponível.';
                     const dataFormatada = formatDate(noticia.data);
 
                     return `
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <img src="${img}" alt="${titulo}" class="img-fluid noticia-img">
-                            </div>
-                            <div class="col-md-8">
-                                <h5><a href="#" onclick="abrirNoticia(${noticia.id}); return false;">${titulo}</a></h5>
-                                <p>${resumo}</p>
-                                <p class="text-muted"><small>${dataFormatada}</small></p>
-                            </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <img src="${img}" alt="${titulo}" class="img-fluid noticia-img">
                         </div>
-                    `;
+                        <div class="col-md-8">
+                            <h5><a href="#" onclick="abrirNoticia(${noticia.id}); return false;">${titulo}</a></h5>
+                            <p>${resumo}</p>
+                            <p class="text-muted"><small>${dataFormatada}</small></p>
+                        </div>
+                    </div>`;
                 }).join('');
+
 
             } catch (error) {
                 console.error('Erro ao carregar notícias:', error);
@@ -399,29 +403,29 @@
                         }).join('');
 
                         container.innerHTML += `
-          <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
-            <h5>${enquete.pergunta}</h5>
-            ${resultados}
-            <p><strong>Você já votou nesta enquete.</strong></p>
-          </div>
-        `;
+            <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+                <h5>${enquete.pergunta}</h5>
+                ${resultados}
+                <p><strong>Você já votou nesta enquete.</strong></p>
+            </div>
+            `;
                     } else {
                         const opcoesHtml = opcoes.map((opcao, i) => `
-          <div>
-            <input type="radio" name="${enqueteId}" id="${enqueteId}_${i}" value="${i}">
-            <label for="${enqueteId}_${i}">${opcao}</label>
-          </div>
-        `).join('');
+            <div>
+                <input type="radio" name="${enqueteId}" id="${enqueteId}_${i}" value="${i}">
+                <label for="${enqueteId}_${i}">${opcao}</label>
+            </div>
+            `).join('');
 
                         container.innerHTML += `
-          <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
-            <h5>${enquete.pergunta}</h5>
-            <form id="form_${enqueteId}">
-              ${opcoesHtml}
-              <button type="submit">Votar</button>
-            </form>
-          </div>
-        `;
+            <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+                <h5>${enquete.pergunta}</h5>
+                <form id="form_${enqueteId}">
+                ${opcoesHtml}
+                <button type="submit">Votar</button>
+                </form>
+            </div>
+            `;
 
                         // Listener do form
                         setTimeout(() => {
