@@ -21,6 +21,69 @@
     .fc-toolbar-title {
         text-transform: uppercase;
     }
+
+    /* Modal */
+    .modal-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        padding: 1rem 3rem;
+    }
+
+    .modal-title {
+        margin: 0;
+        text-align: center;
+        flex: 1;
+        word-break: break-word;
+        max-width: 100%;
+    }
+
+    .modal-header .close {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .modal-img {
+        height: 450px;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 0;
+        user-select: none;
+    }
+
+    .noticia-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    #btnPrevNoticia,
+    #btnNextNoticia {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1050;
+        background: rgba(0, 0, 0, 0.5);
+        border: none;
+        color: white;
+        font-size: 2rem;
+        padding: 0 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    #btnPrevNoticia {
+        left: 10px;
+    }
+
+    #btnNextNoticia {
+        right: 10px;
+    }
 </style>
 
 <head>
@@ -62,12 +125,10 @@
                     data-target="#navbarSupportedContent">
                     <span class="fa fa-bars"></span>
                 </button>
-
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active"><a class="nav-link" href="blog.html">Home</a></li>
                         <li class="nav-item active"><a class="nav-link" href="eventos.html">Eventos</a></li>
-
                     </ul>
                 </div>
             </nav>
@@ -93,8 +154,9 @@
                             <span class="sr-only">Próximo</span>
                         </a>
                     </div>
-                    <div id="noticias-list" class="mt-4"></div>
 
+                    <!-- Lista de outras notícias -->
+                    <div id="noticias-list" class="mt-4"></div>
                 </div>
 
                 <div class="col-md-4 animate-box" data-animate-effect="fadeInRight">
@@ -110,28 +172,34 @@
             </div>
         </div>
     </div>
+
     <!-- Modal de Notícia -->
     <div class="modal fade" id="noticiaModal" tabindex="-1" role="dialog" aria-labelledby="noticiaModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-dialog modal-lg" role="document" style="max-width:900px;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="noticiaModalLabel">Título da Notícia</h5>
+                    <h4 class="modal-title mx-auto" id="noticiaModalLabel">Título da Notícia</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <img id="modalImagem" src="" alt="" class="img-fluid mb-3"
-                        style="max-height:300px; object-fit:cover;">
-                    <p id="modalConteudo"></p>
-                    <p class="text-muted"><small id="modalAutorData"></small></p>
+                <div class="modal-body position-relative" style="overflow-y: auto;">
+                    <img id="modalImagem" src="" alt="" class="img-fluid modal-img w-100" />
+                    <button id="btnPrevNoticia">
+                        <i class="fa fa-chevron-left"></i>
+                    </button>
+                    <button id="btnNextNoticia">
+                        <i class="fa fa-chevron-right"></i>
+                    </button>
+                    <div class="p-3" style="position: relative; z-index: 1;">
+                        <p id="modalConteudo"></p>
+                        <p class="text-muted"><small id="modalAutorData"></small></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-
     <div class="gototop js-top"><a href="#" class="js-gotop"><i class="fa fa-arrow-up"></i></a></div>
 
     <!-- JS -->
@@ -144,6 +212,8 @@
 
     <script>
         const API_BASE = 'http://3.19.193.161/api';
+        let noticiasData = [];
+        let noticiaAtualIndex = -1;
 
         function formatDate(dateStr) {
             const d = new Date(dateStr);
@@ -152,15 +222,21 @@
 
         async function abrirNoticia(id) {
             try {
-                const res = await fetch(`${API_BASE}/noticias/${id}`);
-                if (!res.ok) throw new Error('Erro ao buscar a notícia');
-                const noticia = await res.json();
+                const index = noticiasData.findIndex(n => n.id === id);
+                if (index === -1) throw new Error('Notícia não encontrada');
+                noticiaAtualIndex = index;
 
+                const noticia = noticiasData[index];
 
                 document.getElementById('noticiaModalLabel').innerText = noticia.titulo || 'Sem título';
                 document.getElementById('modalConteudo').innerHTML = noticia.conteudo || 'Sem conteúdo disponível.';
-                document.getElementById('modalAutorData').innerText = `${noticia.id_autor || 'Autor desconhecido'} - ${formatDate(noticia.data)}`;
                 document.getElementById('modalImagem').src = noticia.imagem || 'images/nathan-mcbride-229637.jpg';
+                document.getElementById('modalAutorData').innerText = `Publicado em ${formatDate(noticia.data_publicacao)}`;
+
+                const btnPrev = document.getElementById('btnPrevNoticia');
+                const btnNext = document.getElementById('btnNextNoticia');
+                btnPrev.style.display = noticiaAtualIndex > 0 ? 'inline-block' : 'none';
+                btnNext.style.display = noticiaAtualIndex < noticiasData.length - 1 ? 'inline-block' : 'none';
 
                 $('#noticiaModal').modal('show');
             } catch (err) {
@@ -169,46 +245,83 @@
             }
         }
 
+
         async function loadNews() {
             try {
                 const res = await fetch(`${API_BASE}/noticias?ativo=1`);
                 if (!res.ok) throw new Error('Erro ao buscar notícias');
                 const data = await res.json();
 
-                const importantes = data.slice(0, 3); // ou filtre por .filter(n => n.importante)
+                data.sort((a, b) => new Date(b.data_publicacao) - new Date(a.data_publicacao));
+                const importantes = data.slice(0, 3);
+                noticiasData = data;
+
+                const recentes = data.slice(0, 3);
+                const outras = data.slice(3);
 
                 const indicators = document.getElementById('carousel-indicators');
                 const inner = document.getElementById('carousel-inner');
                 indicators.innerHTML = '';
                 inner.innerHTML = '';
 
-                data.forEach((noticia, index) => {
+                recentes.forEach((noticia, index) => {
                     const isActive = index === 0 ? 'active' : '';
                     const img = noticia.imagem || 'images/nathan-mcbride-229637.jpg';
                     const titulo = noticia.titulo || 'Sem título';
                     const resumo = noticia.resumo || (noticia.conteudo ? noticia.conteudo.slice(0, 100) + '...' : '');
-                    const autor = noticia.autor || 'Autor';
-                    const dataFormatada = formatDate(noticia.data);
 
                     indicators.innerHTML += `<li data-target="#carousel-news" data-slide-to="${index}" class="${isActive}"></li>`;
                     inner.innerHTML += `
-                <div class="carousel-item ${isActive}">
-                <img class="d-block w-100" style="height: 400px; object-fit: cover;" src="${img}" alt="${titulo}">
-                <div class="carousel-caption d-none d-md-block carousel-caption-blur">
-                <h5><a href="#" onclick="abrirNoticia(${noticia.id}); return false;" class="text-white">${titulo}</a></h5>
-                    <p>${resumo}</p>
-                 
-                </div>
-            </div>`;
+                        <div class="carousel-item ${isActive}">
+                            <img class="d-block w-100" style="height: 400px; object-fit: cover;" src="${img}" alt="${titulo}">
+                            <div class="carousel-caption d-none d-md-block carousel-caption-blur">
+                                <h5><a href="#" onclick="abrirNoticia(${noticia.id}); return false;" class="text-white">${titulo}</a></h5>
+                                <p>${resumo}</p>
+                            </div>
+                        </div>`;
                 });
+
+                const noticiasList = document.getElementById('noticias-list');
+                noticiasList.innerHTML = outras.map(noticia => {
+                    const img = noticia.imagem || 'images/nathan-mcbride-229637.jpg';
+                    const titulo = noticia.titulo || 'Sem título';
+                    const resumo = noticia.resumo || (noticia.conteudo ? noticia.conteudo.slice(0, 120) + '...' : '');
+                    const dataFormatada = formatDate(noticia.data);
+
+                    return `
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <img src="${img}" alt="${titulo}" class="img-fluid noticia-img">
+                            </div>
+                            <div class="col-md-8">
+                                <h5><a href="#" onclick="abrirNoticia(${noticia.id}); return false;">${titulo}</a></h5>
+                                <p>${resumo}</p>
+                                <p class="text-muted"><small>${dataFormatada}</small></p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
 
             } catch (error) {
                 console.error('Erro ao carregar notícias:', error);
-                document.getElementById('carousel-inner').innerHTML =
-                    '<div class="carousel-item active"><p class="text-center">Erro ao carregar notícias.</p></div>';
             }
         }
 
+        document.getElementById('btnPrevNoticia').addEventListener('click', () => {
+            if (noticiaAtualIndex > 0) {
+                abrirNoticia(noticiasData[noticiaAtualIndex - 1].id);
+            }
+        });
+
+        document.getElementById('btnNextNoticia').addEventListener('click', () => {
+            if (noticiaAtualIndex < noticiasData.length - 1) {
+                abrirNoticia(noticiasData[noticiaAtualIndex + 1].id);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNews();
+        });
 
         async function loadCalendar() {
             try {
